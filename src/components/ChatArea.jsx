@@ -1,12 +1,13 @@
 import React from "react";
 import styled from "styled-components";
-import Chatroom from "./ChatRoom";
+import ChatRoom from "./ChatRoom";
+import ChatList from "./ChatList";
 
 const ChatArea = () => {
   return (
     <StyledArea>
-      <Chatroom />
-      <Chatroom />
+      <ChatRoom />
+      <ChatList />
     </StyledArea>
   );
 };
@@ -16,6 +17,7 @@ const StyledArea = styled.section`
   height: 100vh;
   padding: 85px 20px 20px;
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   align-items: center;
   justify-content: center;

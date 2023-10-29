@@ -20,7 +20,7 @@ const StyledChatRoom = styled.div`
   height: 100%;
   padding: 10px;
   position: relative;
-  flex: 1 1 0;
+  flex: 2 1 400px;
   display: flex;
   flex-direction: column;
 
