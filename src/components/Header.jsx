@@ -14,7 +14,7 @@ const StyledHeader = styled.header`
   padding: 20px;
   position: fixed;
   top: 0;
-  background-color: black;
+  background-color: dodgerblue;
   color: white;
 
   .roomname {
