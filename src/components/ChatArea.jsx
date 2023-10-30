@@ -26,10 +26,11 @@ const StyledArea = styled.section`
   font-size: 1.2rem;
 
   & > * {
+    max-height: 700px;
     background-color: white;
     border: 3px solid dodgerblue;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    padding: 10px;
+    padding: 15px;
   }
 `;
 
