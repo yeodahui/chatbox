@@ -1,15 +1,19 @@
 import React from "react";
 import styled from "styled-components";
+import CreateRoomButton from "./CreateRoomButton";
 
 const Header = ({ roomname }) => {
   return (
     <StyledHeader>
       <h2 className="roomname">채팅방 {roomname}</h2>
+      <CreateRoomButton />
     </StyledHeader>
   );
 };
 
 const StyledHeader = styled.header`
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   padding: 20px;
   position: fixed;
