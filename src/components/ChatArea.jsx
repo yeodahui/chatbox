@@ -1,14 +1,18 @@
-import React from "react";
 import styled from "styled-components";
 import ChatRoom from "./ChatRoom";
 import ChatList from "./ChatList";
+import { ChatRoomProvider } from "../contexts/chatRoomContext";
 
 const ChatArea = () => {
   return (
-    <StyledArea>
-      <ChatRoom />
-      <ChatList />
-    </StyledArea>
+    <>
+      <StyledArea>
+        <ChatRoomProvider>
+          <ChatRoom />
+          <ChatList />
+        </ChatRoomProvider>
+      </StyledArea>
+    </>
   );
 };
 
