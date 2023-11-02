@@ -19,25 +19,22 @@ function App() {
 }
 
 const Auth = ({ children }) => {
-  const { setUsername, setToken } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   useEffect(() => {
     // 세션스토리지에서 token과 username을 불러오고, null이면 전역 상태로 저장
-    let token = sessionStorage.getItem("token");
-    let username = sessionStorage.getItem("username");
 
-    if (token || username) {
+    if (user.token || user.username) {
       console.log("토큰이 저장되어있습니다.");
     } else {
-      getUserToken();
       console.log("토큰을 불러옵니다.");
-
-      token = sessionStorage.getItem("token");
-      username = sessionStorage.getItem("username");
+      getUserToken();
     }
 
-    setToken(token);
-    setUsername(username);
+    const token = sessionStorage.getItem("token");
+    const username = sessionStorage.getItem("username");
+
+    setUser({ token, username });
   }, []);
 
   return <>{children}</>;

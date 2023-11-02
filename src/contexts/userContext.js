@@ -9,22 +9,8 @@ export const UserProvider = ({ children }) => {
     token: "",
   });
 
-  const setUsername = (username) => {
-    setUser((prev) => ({
-      ...prev,
-      username: username,
-    }));
-  };
-
-  const setToken = (token) => {
-    setUser((prev) => ({
-      ...prev,
-      token: token,
-    }));
-  };
-
   return (
-    <UserContext.Provider value={{ user, setUsername, setToken }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );
