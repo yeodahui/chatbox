@@ -11,8 +11,8 @@ const Bubble = ({ isMe, sender, message, createDate }) => {
   return (
     <StyledBubble>
       {!isMe && <p className="name">{sender}</p>}
-      <div className="content">
-        <p className={`message ${isMe ? "right" : "left"}`}>{message}</p>
+      <div className={`content ${isMe ? "right" : "left"}`}>
+        <p className={`message`}>{message}</p>
         <p className="time">{`${timeObj.period} ${timeObj.hours}:${timeObj.minutes}`}</p>
       </div>
     </StyledBubble>
@@ -30,8 +30,16 @@ const StyledBubble = styled.li`
     display: flex;
     flex-wrap: nowrap;
     align-items: flex-end;
-    flex-direction: ${({ isMe }) => (isMe ? "row" : "row-reverse")};
     width: 100%;
+
+    &.right {
+      flex-direction: row-reverse;
+
+      .message {
+        background-color: dodgerblue;
+        color: white;
+      }
+    }
 
     .message {
       display: inline-block;
@@ -42,14 +50,8 @@ const StyledBubble = styled.li`
       line-height: normal;
       word-wrap: break-word;
 
-      &.right {
-        background-color: dodgerblue;
-        color: white;
-      }
-      &.left {
-        background-color: #eee;
-        color: inherit;
-      }
+      background-color: #eee;
+      color: inherit;
     }
 
     .time {
