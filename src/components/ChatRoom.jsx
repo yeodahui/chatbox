@@ -1,63 +1,55 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { ChatRoomContext } from "../contexts/chatRoomContext";
+import { UserContext } from "../contexts/userContext";
 import LeftBubble from "./LeftBubble";
 import RightBubble from "./RightBubble";
 
 const ChatRoom = () => {
-  const isMe = (username) => {
-    return username === "jihyun1";
+  const { chatRoom } = useContext(ChatRoomContext);
+  const { user } = useContext(UserContext);
+  const [chat, setChat] = useState();
+
+  useEffect(() => {
+    setChat(chatRoom.data);
+  }, [chatRoom]);
+
+  const isMe = (sender) => {
+    return sender === user.username;
   };
-  const data = [
-    {
-      sender: "jihyun2",
-      message: "jihyun2님이 입장하셨습니다.",
-      createDate: "2023-10-29T08:53:23.06258",
-    },
-    {
-      sender: "jihyun1",
-      message: "jihyun1님이 입장하셨습니다.",
-      createDate: "2023-10-29T08:53:25.471092",
-    },
-    {
-      sender: "jihyun1",
-      message: "jihyun1 메시지임!!!!!1 ",
-      createDate: "2023-10-29T08:53:49.549486",
-    },
-    {
-      sender: "jihyun2",
-      message: "jihyun2 메시지임!!!!! ",
-      createDate: "2023-10-29T08:54:25.39632",
-    },
-  ];
 
   return (
     <StyledChatRoom>
-      <div className="cont-content">
-        <ol className="chat-list">
-          {data.map(({ sender, message, createDate }) =>
-            isMe(sender) ? (
-              <RightBubble
-                sender={sender}
-                message={message}
-                createDate={createDate}
-              />
-            ) : (
-              <LeftBubble
-                sender={sender}
-                message={message}
-                createDate={createDate}
-              />
-            )
-          )}
-        </ol>
-      </div>
-      <form className="cont-input">
-        <input
-          className="input"
-          type={"text"}
-          placeholder={"메시지 입력 후 Enter"}
-        />
-      </form>
+      {chat && (
+        <>
+          <div className="cont-content">
+            <ol className="chat-list">
+              {chat.map(({ sender, message, createDate }) =>
+                isMe(sender) ? (
+                  <RightBubble
+                    sender={sender}
+                    message={message}
+                    createDate={createDate}
+                  />
+                ) : (
+                  <LeftBubble
+                    sender={sender}
+                    message={message}
+                    createDate={createDate}
+                  />
+                )
+              )}
+            </ol>
+          </div>
+          <form className="cont-input">
+            <input
+              className="input"
+              type={"text"}
+              placeholder={"메시지 입력 후 Enter"}
+            />
+          </form>
+        </>
+      )}
     </StyledChatRoom>
   );
 };

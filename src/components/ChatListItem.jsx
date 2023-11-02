@@ -6,10 +6,10 @@ import { UserContext } from "../contexts/userContext";
 
 const ChatListItem = ({ id, roomName }) => {
   const { user } = useContext(UserContext);
-  const { setChatRoom } = useContext(ChatRoomContext);
+  const { chatRoom, setChatRoom } = useContext(ChatRoomContext);
 
   const getChatRoom = async () => {
-    if (user.token && id) {
+    if (user.token && id !== chatRoom.id) {
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_BASE_URL}/chatroom/chatList?roomId=${id}`,
