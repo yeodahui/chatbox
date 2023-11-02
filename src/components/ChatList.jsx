@@ -1,36 +1,48 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { UserContext } from "../contexts/userContext";
 import ChatListItem from "./ChatListItem";
 
 const ChatList = () => {
-  const [chatList, setChatList] = useState([
-    {
-      id: 9,
-      roomName: "채팅방 1",
-      userCount: 0,
-    },
-    {
-      id: 10,
-      roomName: "채팅방 2",
-      userCount: 0,
-    },
-  ]);
+  const { user } = useContext(UserContext);
+  const [chatList, setChatList] = useState([]);
+
+  const getChatList = async () => {
+    if (user.token) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}/chatroom/chatRoomList`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
+        );
+        console.log(response.data.data);
+        setChatList(response.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   useEffect(() => {
-    // axios.get(`${process.env.REACT_APP_BASE_URL}`);
-  }, []);
+    getChatList();
+  }, [user]);
 
   return (
     <StyledChatRoomList>
-      {/* <h2>현재 참여중인 채팅방 목록</h2> */}
       <ul className="list">
-        {chatList.map(({ id, roomName, userCount }) => (
-          <ChatListItem id={id} roomName={roomName} userCount={userCount} />
-        ))}
+        {chatList &&
+          chatList.map(({ id, roomName, userCount }) => (
+            <ChatListItem id={id} roomName={roomName} userCount={userCount} />
+          ))}
       </ul>
     </StyledChatRoomList>
   );
 };
+
 const StyledChatRoomList = styled.div`
   height: 100%;
   padding: 20px 10px;
