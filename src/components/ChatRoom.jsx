@@ -2,8 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ChatRoomContext } from "../contexts/chatRoomContext";
 import { UserContext } from "../contexts/userContext";
-import LeftBubble from "./LeftBubble";
-import RightBubble from "./RightBubble";
+import Bubble from "./Bubble";
 
 const ChatRoom = () => {
   const { chatRoom } = useContext(ChatRoomContext);
@@ -24,21 +23,14 @@ const ChatRoom = () => {
         <>
           <div className="cont-content">
             <ol className="chat-list">
-              {chat.map(({ sender, message, createDate }) =>
-                isMe(sender) ? (
-                  <RightBubble
-                    sender={sender}
-                    message={message}
-                    createDate={createDate}
-                  />
-                ) : (
-                  <LeftBubble
-                    sender={sender}
-                    message={message}
-                    createDate={createDate}
-                  />
-                )
-              )}
+              {chat.map(({ sender, message, createDate }) => (
+                <Bubble
+                  isMe={isMe(sender)}
+                  sender={sender}
+                  message={message}
+                  createDate={createDate}
+                />
+              ))}
             </ol>
           </div>
           <form className="cont-input">
