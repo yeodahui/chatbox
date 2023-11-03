@@ -62,14 +62,25 @@ export const WebSocketProvider = ({ children }) => {
    * @param {object} headers 요청에 전달할 헤더
    */
   const publish = (destination, body, headers) => {
-    if (client.current) {
-      client.current.publish({
-        destination: destination,
-        body: body,
-        headers: headers,
-      });
+    if (destination && body && headers) {
+      if (client.current) {
+        try {
+          client.current.publish({
+            destination: destination,
+            body: body,
+            headers: headers,
+          });
+        } catch (error) {
+          console.log(error);
+          client.current.debug(error);
+        }
+      } else {
+        console.log("에러: Client가 연결되지 않아 발행할 수 없습니다.");
+      }
     } else {
-      client.current.debug("에러: Client가 연결되지 않아 발행할 수 없습니다.");
+      console.log(
+        "에러: publish의 인자 destination, body, headers는 필수 인자입니다."
+      );
     }
   };
 

@@ -1,7 +1,10 @@
 import "./App.css";
 import { useContext, useEffect } from "react";
 import { UserContext, UserProvider } from "./contexts/userContext";
-import { WebSocketProvider } from "./contexts/webSocketContext";
+import {
+  useWebSocketContext,
+  WebSocketProvider,
+} from "./contexts/webSocketContext";
 import { getUserToken } from "./modules/getUserToken";
 import ChatArea from "./components/ChatArea";
 import Header from "./components/Header";
@@ -9,20 +12,21 @@ import Header from "./components/Header";
 function App() {
   return (
     <>
-      <WebSocketProvider>
-        <UserProvider>
+      <UserProvider>
+        <WebSocketProvider>
           <Auth>
             <Header />
             <ChatArea />
           </Auth>
-        </UserProvider>
-      </WebSocketProvider>
+        </WebSocketProvider>
+      </UserProvider>
     </>
   );
 }
 
 const Auth = ({ children }) => {
   const { user, setUser } = useContext(UserContext);
+  const { connect, disconnect } = useWebSocketContext();
 
   useEffect(() => {
     // 세션스토리지에서 token과 username을 불러오고, null이면 전역 상태로 저장
@@ -38,6 +42,10 @@ const Auth = ({ children }) => {
     const username = sessionStorage.getItem("username");
 
     setUser({ token, username });
+    connect(token);
+    return () => {
+      disconnect();
+    };
   }, []);
 
   return <>{children}</>;

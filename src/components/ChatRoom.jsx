@@ -2,11 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ChatRoomContext } from "../contexts/chatRoomContext";
 import { UserContext } from "../contexts/userContext";
+import { useWebSocketContext } from "../contexts/webSocketContext";
+import { getChatRoom } from "../modules/getChatRoom";
 import Bubble from "./Bubble";
 
 const ChatRoom = () => {
-  const { chatRoom } = useContext(ChatRoomContext);
+  const { chatRoom, setChatRoom } = useContext(ChatRoomContext);
   const { user } = useContext(UserContext);
+  const { publish } = useWebSocketContext();
   const [chat, setChat] = useState();
   const [newMessage, setNewMessage] = useState("");
 
@@ -20,8 +23,36 @@ const ChatRoom = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("입력됨: " + newMessage);
-    // 여기서 메시지 전송
+
+    console.log("입력됨: " + newMessage);
+
+    // 유효성 검사
+    if (newMessage === "") {
+      console.log("메시지가 입력되지 않았습니다.");
+      return;
+    }
+
+    setNewMessage("");
+
+    // 메시지 전송
+    const body = {
+      type: "TALK",
+      roomId: chatRoom.id,
+      username: user.username,
+      message: newMessage,
+    };
+    console.log(body);
+
+    try {
+      publish("pub/chat/1", body, {
+        Authorization: user.token,
+      });
+      getChatRoom(chatRoom.roomName, user, chatRoom.id, (result) => {
+        setChatRoom(result);
+      });
+    } catch (error) {
+      console.log("통신 실패: 메시지 전송에 실패했습니다.");
+    }
   };
 
   return (
