@@ -1,34 +1,17 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { UserContext } from "../contexts/userContext";
+import { getChatList } from "../modules/getChatList";
 import ChatListItem from "./ChatListItem";
 
 const ChatList = () => {
   const { user } = useContext(UserContext);
   const [chatList, setChatList] = useState([]);
 
-  const getChatList = async () => {
-    if (user.token) {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/chatroom/chatRoomList`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-        console.log(response.data.data);
-        setChatList(response.data.data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
   useEffect(() => {
-    getChatList();
+    getChatList(user.token, (data) => {
+      setChatList(data);
+    });
   }, [user]);
 
   return (
