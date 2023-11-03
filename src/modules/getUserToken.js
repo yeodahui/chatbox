@@ -23,8 +23,6 @@ export const getUserToken = async () => {
     }
   } catch (e) {
     console.error("통신 실패: 토큰 받아오기에 실패했습니다.");
-    console.error(e.response.status);
-    console.error(e.response.data);
-    console.error(e.response.headers);
+    console.error(e);
   }
 };
