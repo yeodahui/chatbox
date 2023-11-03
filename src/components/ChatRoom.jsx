@@ -105,11 +105,13 @@ const ChatRoom = () => {
 
   return (
     <StyledChatRoom>
-      {chat && (
-        <button className="button-exit" onClick={exitHandler}>
-          채팅방 나가기
-        </button>
-      )}
+      <button
+        className={`button-exit`}
+        disabled={`${chatRoom.id ? false : true}`}
+        onClick={exitHandler}
+      >
+        채팅방 나가기
+      </button>
       {chat && (
         <div className="cont-content">
           <ol className="chat-list" ref={chatListDOM}>
@@ -164,6 +166,15 @@ const StyledChatRoom = styled.div`
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s ease-in;
+
+    &:disabled,
+    &:disabled:hover {
+      border: 3px solid #eee;
+      background-color: #eee;
+      color: #888;
+      font-weight: normal;
+      cursor: not-allowed;
+    }
 
     &:hover {
       background-color: dodgerblue;
