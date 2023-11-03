@@ -1,6 +1,7 @@
 import "./App.css";
 import { useContext, useEffect } from "react";
 import { UserContext, UserProvider } from "./contexts/userContext";
+import { WebSocketProvider } from "./contexts/webSocketContext";
 import { getUserToken } from "./modules/getUserToken";
 import ChatArea from "./components/ChatArea";
 import Header from "./components/Header";
@@ -8,12 +9,14 @@ import Header from "./components/Header";
 function App() {
   return (
     <>
-      <UserProvider>
-        <Auth>
-          <Header />
-          <ChatArea />
-        </Auth>
-      </UserProvider>
+      <WebSocketProvider>
+        <UserProvider>
+          <Auth>
+            <Header />
+            <ChatArea />
+          </Auth>
+        </UserProvider>
+      </WebSocketProvider>
     </>
   );
 }
