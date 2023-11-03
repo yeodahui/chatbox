@@ -8,6 +8,7 @@ const ChatRoom = () => {
   const { chatRoom } = useContext(ChatRoomContext);
   const { user } = useContext(UserContext);
   const [chat, setChat] = useState();
+  const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
     setChat(chatRoom.data);
@@ -17,31 +18,41 @@ const ChatRoom = () => {
     return sender === user.username;
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert("입력됨: " + newMessage);
+    // 여기서 메시지 전송
+  };
+
   return (
     <StyledChatRoom>
       {chat && (
-        <>
-          <div className="cont-content">
-            <ol className="chat-list">
-              {chat.map(({ sender, message, createDate }) => (
-                <Bubble
-                  isMe={isMe(sender)}
-                  sender={sender}
-                  message={message}
-                  createDate={createDate}
-                />
-              ))}
-            </ol>
-          </div>
-          <form className="cont-input">
-            <input
-              className="input"
-              type={"text"}
-              placeholder={"메시지 입력 후 Enter"}
-            />
-          </form>
-        </>
+        <div className="cont-content">
+          <ol className="chat-list">
+            {chat.map(({ sender, message, createDate }) => (
+              <Bubble
+                isMe={isMe(sender)}
+                sender={sender}
+                message={message}
+                createDate={createDate}
+              />
+            ))}
+          </ol>
+        </div>
       )}
+      <form className="cont-input" onSubmit={handleSubmit}>
+        <input
+          className="input"
+          type={"text"}
+          placeholder={"메시지 입력 후 Enter"}
+          required
+          value={newMessage}
+          onChange={(e) => {
+            setNewMessage(e.target.value);
+          }}
+          on
+        />
+      </form>
     </StyledChatRoom>
   );
 };
