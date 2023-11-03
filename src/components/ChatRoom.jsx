@@ -1,26 +1,59 @@
-import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { ChatListContext } from "../contexts/chatListContext";
 import { ChatRoomContext } from "../contexts/chatRoomContext";
 import { UserContext } from "../contexts/userContext";
 import { useWebSocketContext } from "../contexts/webSocketContext";
+import { getChatList } from "../modules/getChatList";
 import { getChatRoom } from "../modules/getChatRoom";
 import Bubble from "./Bubble";
 
 const ChatRoom = () => {
   const { chatRoom, setChatRoom } = useContext(ChatRoomContext);
   const { user } = useContext(UserContext);
-  const { publish } = useWebSocketContext();
+  const { subscribe, publish } = useWebSocketContext();
+  const { setChatList } = useContext(ChatListContext);
+  const chatListDOM = useRef();
+
+  // chat: 현재 채팅방 데이터 저장
   const [chat, setChat] = useState();
+  // newMessage: 입력할 때마다 채팅 메시지가 저장됨
   const [newMessage, setNewMessage] = useState("");
 
+  const chatScrollDown = () => {
+    // 스크롤 아래로 내리는 함수
+    if (chatListDOM.current) {
+      console.dir(chatListDOM.current);
+      chatListDOM.current.scrollTop = chatListDOM.current.scrollHeight;
+    }
+  };
+
   useEffect(() => {
+    // 현재 보고 있는 채팅방 정보를 담은 chatRoom 전역 상태가 업데이트 될 때마다 대화내역 업데이트
     setChat(chatRoom.data);
+    if (chatRoom.id) {
+      // WebSocket 구독
+      subscribe(
+        `/sub/chat/${chatRoom.id}`,
+        (message) => {
+          console.log(message);
+          getChatRoom(chatRoom.roomName, user, chatRoom.id, (data) => {
+            setChatRoom(data);
+          });
+        },
+        { Authorization: `Bearer ${user.token}` }
+      );
+    }
+    chatScrollDown(); // 변경이 있을 때마다 스크롤 내리기
   }, [chatRoom]);
 
+  // 메시지 전송자 = 로그인된 유저인지 판별하는 함수
   const isMe = (sender) => {
     return sender === user.username;
   };
 
+  // 메시지 입력되면 실행하는 핸들러
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -34,7 +67,7 @@ const ChatRoom = () => {
 
     setNewMessage("");
 
-    // 메시지 전송
+    // ========= Start: WebSocket 메시지 전송 =========
     const body = {
       type: "TALK",
       roomId: chatRoom.id,
@@ -44,22 +77,42 @@ const ChatRoom = () => {
     console.log(body);
 
     try {
-      publish("pub/chat/1", body, {
-        Authorization: user.token,
+      // publish 시도
+      publish(`/pub/chat/${chatRoom.id}`, body, {
+        Authorization: `Bearer ${user.token}`,
       });
-      getChatRoom(chatRoom.roomName, user, chatRoom.id, (result) => {
-        setChatRoom(result);
+      getChatRoom(chatRoom.roomName, user, chatRoom.id, (data) => {
+        setChatRoom(data);
       });
     } catch (error) {
       console.log("통신 실패: 메시지 전송에 실패했습니다.");
     }
+    // ========= End: WebSocket 메시지 전송 =========
+  };
+
+  const exitHandler = async () => {
+    try {
+      // 현재 채팅방에서 유저 삭제
+      axios.delete(
+        `${process.env.REACT_APP_BASE_URL}/chatroom/exitUser?roomId=${chatRoom.id}&username=${user.username}`
+      );
+      // 유저 삭제 후 채팅방 목록 다시 조회
+      getChatList(user.token, (data) => {
+        setChatList(data);
+      });
+    } catch (error) {}
   };
 
   return (
     <StyledChatRoom>
       {chat && (
+        <button className="button-exit" onClick={exitHandler}>
+          채팅방 나가기
+        </button>
+      )}
+      {chat && (
         <div className="cont-content">
-          <ol className="chat-list">
+          <ol className="chat-list" ref={chatListDOM}>
             {chat.map(({ sender, message, createDate }) => (
               <Bubble
                 isMe={isMe(sender)}
@@ -81,7 +134,6 @@ const ChatRoom = () => {
           onChange={(e) => {
             setNewMessage(e.target.value);
           }}
-          on
         />
       </form>
     </StyledChatRoom>
@@ -97,6 +149,27 @@ const StyledChatRoom = styled.div`
 
   overflow: hidden;
   border-radius: 20px;
+
+  .button-exit {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 5px 10px;
+    border: 3px solid dodgerblue;
+    border-radius: 10px;
+    box-shadow: 0 0 15px white;
+    background-color: white;
+    color: dodgerblue;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+
+    &:hover {
+      background-color: dodgerblue;
+      color: white;
+    }
+  }
 
   .cont-content {
     padding: 10px 5px 0;
