@@ -1,5 +1,4 @@
 // STOMP 웹소켓 연결 및 연결에 관한 핸들러 전역 상태 관리 Context
-
 import { createContext, useContext, useMemo, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 
@@ -66,19 +65,18 @@ export const WebSocketProvider = ({ children }) => {
       if (client.current) {
         try {
           client.current.publish({
-            destination: destination,
-            body: body,
-            headers: headers,
+            destination,
+            body: JSON.stringify(body),
+            headers,
           });
         } catch (error) {
-          console.log(error);
-          client.current.debug(error);
+          console.error(error);
         }
       } else {
-        console.log("에러: Client가 연결되지 않아 발행할 수 없습니다.");
+        console.error("에러: Client가 연결되지 않아 발행할 수 없습니다.");
       }
     } else {
-      console.log(
+      console.error(
         "에러: publish의 인자 destination, body, headers는 필수 인자입니다."
       );
     }
@@ -92,17 +90,9 @@ export const WebSocketProvider = ({ children }) => {
    */
   const subscribe = (destination, callback, headers) => {
     if (client.current) {
-      const sub = client.currunt.subscribe({
-        destination: destination,
-        callback: callback,
-        headers: headers,
-      });
-      //  추후 unsubscribe를 위해 작성중인 코드...
-      //   if (!(sub in subscribtions)) {
-      //     setSubscribtions((prev) => ({ ...prev, sub }));
-      //   }
+      client.current.subscribe(destination, callback, headers);
     } else {
-      client.current.debug("에러: Client가 연결되지 않아 구독할 수 없습니다.");
+      console.error("에러: Client가 연결되지 않아 구독할 수 없습니다.");
     }
   };
 
