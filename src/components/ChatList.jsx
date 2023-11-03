@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { UserContext } from "../contexts/userContext";
+import { ChatListContext } from "../contexts/chatListContext";
 import { getChatList } from "../modules/getChatList";
 import ChatListItem from "./ChatListItem";
 
 const ChatList = () => {
   const { user } = useContext(UserContext);
-  const [chatList, setChatList] = useState([]);
+  const { chatList, setChatList } = useContext(ChatListContext);
 
   useEffect(() => {
     getChatList(user.token, (data) => {
