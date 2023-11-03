@@ -91,9 +91,13 @@ const ChatRoom = () => {
   };
 
   const exitHandler = async () => {
+    if (!(chatRoom.id && user.username)) {
+      console.log("채팅방에 입장하지 않은 채 나갈 수 없음");
+      return;
+    }
     try {
       // 현재 채팅방에서 유저 삭제
-      axios.delete(
+      axios.get(
         `${process.env.REACT_APP_BASE_URL}/chatroom/exitUser?roomId=${chatRoom.id}&username=${user.username}`
       );
       // 유저 삭제 후 채팅방 목록 다시 조회
@@ -105,11 +109,7 @@ const ChatRoom = () => {
 
   return (
     <StyledChatRoom>
-      <button
-        className={`button-exit`}
-        disabled={`${chatRoom.id ? false : true}`}
-        onClick={exitHandler}
-      >
+      <button className={`button-exit`} onClick={exitHandler}>
         채팅방 나가기
       </button>
       {chat && (
