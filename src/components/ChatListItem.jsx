@@ -1,38 +1,21 @@
-import axios from "axios";
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { ChatRoomContext } from "../contexts/chatRoomContext";
 import { UserContext } from "../contexts/userContext";
+import { getChatRoom } from "../modules/getChatRoom";
 
 const ChatListItem = ({ id, roomName }) => {
   const { user } = useContext(UserContext);
   const { chatRoom, setChatRoom } = useContext(ChatRoomContext);
 
-  const getChatRoom = async () => {
-    if (user.token && id !== chatRoom.id) {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/chatroom/chatList?roomId=${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-        setChatRoom({
-          id: id,
-          roomName: roomName,
-          data: response.data.data,
-        });
-        console.log(response.data.data);
-        console.log(`방 ID: ${id}`);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
   const onClick = () => {
-    getChatRoom();
+    console.log(id);
+    console.log(chatRoom.id);
+    if (id !== chatRoom.id) {
+      getChatRoom(roomName, user, id, (result) => {
+        setChatRoom(result);
+      });
+    }
   };
 
   return (
